@@ -1,0 +1,25 @@
+[package]
+name = "poruos"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "net"] }
+diesel = { version = "2", features = [
+    "sqlite", 
+    "returning_clauses_for_sqlite_3_35",
+    "r2d2", 
+    "chrono"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+dotenvy = "0.15"
+chrono = "0.4"
+axum = { version = "0.7.9", features = ["multipart"] }
+ring = { version = "0.17", default-features = false }
+base64 = { version = "0.22", features = ["alloc"], default-features = false }
+axum-server = { version = "0.6", features = ["tls-rustls"], default-features = false }
+tracing = { version = "0.1", features = ["attributes"], default-features = false }
+tracing-subscriber = { version = "0.3", features = ["fmt"], default-features = false }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full"] }
