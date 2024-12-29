@@ -1,3 +1,4 @@
+pub mod finance;
 pub mod person;
 
 use diesel::r2d2::{ConnectionManager, PooledConnection};

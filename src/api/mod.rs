@@ -1,5 +1,5 @@
+mod finance;
 mod http;
-// mod user;
 mod person;
 mod ping;
 
@@ -16,6 +16,7 @@ pub fn router() -> Router {
         .with_state(state.clone());
 
     router = router.merge(person::router(state.clone()));
+    router = router.merge(finance::router(state.clone()));
 
     router
 }

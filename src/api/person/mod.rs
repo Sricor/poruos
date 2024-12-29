@@ -108,7 +108,7 @@ mod put {
         Json(payload): Json<RequestBody>,
     ) -> ResponseResult<ResponseBody> {
         if claim.subject() != unique {
-            return Err(Response::bad_request("not auth".into()))
+            return Err(Response::bad_request("not auth".into()));
         }
 
         let mut is_update = false;
