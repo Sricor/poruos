@@ -52,6 +52,7 @@ pub mod get {
     }
 }
 
+// TODO: fix the error numeric_code from finance_currency_numeric_code
 pub mod post {
     pub const PATH: &str = "/finance/currency/transaction";
 
