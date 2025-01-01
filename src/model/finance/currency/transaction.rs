@@ -1,12 +1,14 @@
 use chrono::NaiveDateTime;
 use diesel::prelude::{Queryable, Selectable};
 
+use crate::model::finance::Amount;
+
 #[derive(Queryable)]
 #[diesel(table_name = crate::schema::finance_currency_transaction_category)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct TransactionCategory {
     _unique: i64,
-    pub owner: i32,
+    pub owner: i64,
     pub remarks: Option<String>,
     pub is_publish: bool,
     pub created_at: NaiveDateTime,
@@ -19,7 +21,7 @@ pub struct TransactionCategory {
 pub struct Transaction {
     _unique: i64,
     pub owner: i64,
-    pub amount: i64,
+    pub amount: Amount,
     pub numeric_code: i64,
     pub remarks: Option<String>,
     pub is_publish: bool,

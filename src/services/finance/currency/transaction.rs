@@ -1,6 +1,7 @@
 use diesel::prelude::*;
 
 use crate::model::finance::currency::transaction::Transaction;
+use crate::model::finance::Amount;
 use crate::schema::finance_currency_transaction;
 
 use super::connection;
@@ -8,7 +9,7 @@ use super::connection;
 impl Transaction {
     pub fn insert_one(
         owner: i64,
-        amount: i64,
+        amount: Amount,
         numeric_code: i64,
         remarks: Option<&String>,
     ) -> Option<Self> {

@@ -15,7 +15,7 @@ pub mod get {
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct ResponseBody {
         pub unique: i64,
-        pub amount: i64,
+        pub amount: f64,
         pub numeric_code: i64,
         pub remarks: Option<String>,
         pub occurrence_at: u128,
@@ -39,7 +39,7 @@ pub mod get {
             .into_iter()
             .map(|e| ResponseBody {
                 unique: e.unique(),
-                amount: e.amount,
+                amount: e.amount.to_f64(),
                 numeric_code: e.numeric_code,
                 remarks: e.remarks.clone(),
                 occurrence_at: e.occurrence_at(),
@@ -60,10 +60,11 @@ pub mod post {
 
     use crate::api::http::prelude::*;
     use crate::model::finance::currency::transaction::Transaction;
+    use crate::model::finance::Amount;
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct RequestBody {
-        pub amount: i64,
+        pub amount: f64,
         pub numeric_code: i64,
         pub remarks: Option<String>,
     }
@@ -71,7 +72,7 @@ pub mod post {
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct ResponseBody {
         pub unique: i64,
-        pub amount: i64,
+        pub amount: f64,
         pub numeric_code: i64,
         pub remarks: Option<String>,
         pub occurrence_at: u128,
@@ -86,7 +87,7 @@ pub mod post {
     ) -> ResponseResult<ResponseBody> {
         let item = Transaction::insert_one(
             claim.subject(),
-            payload.amount,
+            Amount::from_f64(payload.amount)?,
             payload.numeric_code,
             payload.remarks.as_ref(),
         )
@@ -94,7 +95,7 @@ pub mod post {
 
         Ok(Response::ok(ResponseBody {
             unique: item.unique(),
-            amount: item.amount,
+            amount: item.amount.to_f64(),
             numeric_code: item.numeric_code,
             remarks: item.remarks.clone(),
             occurrence_at: item.occurrence_at(),
