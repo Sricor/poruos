@@ -5,7 +5,7 @@ use diesel::prelude::{AsChangeset, Queryable, Selectable};
 #[diesel(table_name = crate::schema::person)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct Person {
-    _unique: i32,
+    _unique: i64,
     nickname: String,
     password: String,
     created_at: NaiveDateTime,
@@ -13,7 +13,7 @@ pub struct Person {
 }
 
 impl Person {
-    pub fn unique(&self) -> i32 {
+    pub fn unique(&self) -> i64 {
         self._unique
     }
 

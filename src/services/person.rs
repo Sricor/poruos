@@ -18,7 +18,7 @@ impl Person {
             .ok()
     }
 
-    pub fn select_one_by_unique(id: i32) -> Option<Self> {
+    pub fn select_one_by_unique(id: i64) -> Option<Self> {
         let conn = &mut connection();
 
         person::table.find(id).first(conn).ok()
@@ -45,7 +45,7 @@ impl Person {
             .ok()
     }
 
-    pub fn update_one_by_unique(id: i32, item: Self) -> Option<Person> {
+    pub fn update_one_by_unique(id: i64, item: Self) -> Option<Person> {
         let conn = &mut connection();
 
         diesel::update(person::table.find(id))

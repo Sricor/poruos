@@ -14,7 +14,7 @@ impl NumericCode {
         finance_currency_numeric_code::table.load::<Self>(conn).ok()
     }
 
-    pub fn select_one_by_code(code: i32) -> Option<Self> {
+    pub fn select_one_by_code(code: i64) -> Option<Self> {
         let conn = &mut connection();
 
         finance_currency_numeric_code::table

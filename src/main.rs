@@ -4,6 +4,7 @@ mod consts;
 mod model;
 mod schema;
 mod services;
+mod sqlite_mapping;
 mod time;
 
 use std::env;

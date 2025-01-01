@@ -1,6 +1,8 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    use crate::sqlite_mapping::*;
+
     finance_currency_numeric_code (_unique) {
         _unique -> Integer,
         code -> Integer,
@@ -11,6 +13,8 @@ diesel::table! {
 }
 
 diesel::table! {
+    use crate::sqlite_mapping::*;
+
     finance_currency_transaction (_unique) {
         _unique -> Integer,
         owner -> Integer,
@@ -25,6 +29,8 @@ diesel::table! {
 }
 
 diesel::table! {
+    use crate::sqlite_mapping::*;
+
     finance_currency_transaction_category (_unique) {
         _unique -> Integer,
         owner -> Integer,
@@ -36,6 +42,8 @@ diesel::table! {
 }
 
 diesel::table! {
+    use crate::sqlite_mapping::*;
+
     person (_unique) {
         _unique -> Integer,
         nickname -> Text,

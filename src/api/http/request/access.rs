@@ -44,13 +44,13 @@ pub mod claim {
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct Claim {
-        sub: i32,
+        sub: i64,
         iat: u128,
         exp: u128,
     }
 
     impl Claim {
-        pub fn new(sub: i32) -> Self {
+        pub fn new(sub: i64) -> Self {
             use crate::time::timestamp;
 
             let iat = timestamp().as_millis();
@@ -59,7 +59,7 @@ pub mod claim {
             Self { sub, iat, exp }
         }
 
-        pub fn subject(&self) -> i32 {
+        pub fn subject(&self) -> i64 {
             self.sub
         }
 

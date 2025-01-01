@@ -61,14 +61,14 @@ mod get {
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct ResponseBody {
-        pub unique: i32,
+        pub unique: i64,
         pub nickname: String,
         pub created_at: u128,
         pub updated_at: u128,
     }
 
     #[tracing::instrument()]
-    pub async fn handler(Path(unique): Path<i32>) -> ResponseResult<ResponseBody> {
+    pub async fn handler(Path(unique): Path<i64>) -> ResponseResult<ResponseBody> {
         match Person::select_one_by_unique(unique) {
             Some(person) => Ok(Response::ok(ResponseBody {
                 unique: person.unique(),
@@ -104,7 +104,7 @@ mod put {
     #[tracing::instrument()]
     pub async fn handler(
         claim: Claim,
-        Path(unique): Path<i32>,
+        Path(unique): Path<i64>,
         Json(payload): Json<RequestBody>,
     ) -> ResponseResult<ResponseBody> {
         if claim.subject() != unique {

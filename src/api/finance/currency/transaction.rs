@@ -14,9 +14,9 @@ pub mod get {
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct ResponseBody {
-        pub unique: i32,
-        pub amount: i32,
-        pub numeric_code: i32,
+        pub unique: i64,
+        pub amount: i64,
+        pub numeric_code: i64,
         pub remarks: Option<String>,
         pub occurrence_at: u128,
         pub created_at: u128,
@@ -63,16 +63,16 @@ pub mod post {
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct RequestBody {
-        pub amount: i32,
-        pub numeric_code: i32,
+        pub amount: i64,
+        pub numeric_code: i64,
         pub remarks: Option<String>,
     }
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct ResponseBody {
-        pub unique: i32,
-        pub amount: i32,
-        pub numeric_code: i32,
+        pub unique: i64,
+        pub amount: i64,
+        pub numeric_code: i64,
         pub remarks: Option<String>,
         pub occurrence_at: u128,
         pub created_at: u128,

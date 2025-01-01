@@ -8,7 +8,7 @@ pub mod get {
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct ResponseBody {
-        pub code: i32,
+        pub code: i64,
         pub symbol: String,
     }
 
@@ -39,12 +39,12 @@ pub mod get_code {
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct ResponseBody {
-        pub code: i32,
+        pub code: i64,
         pub symbol: String,
     }
 
     #[tracing::instrument()]
-    pub async fn handler(Path(code): Path<i32>) -> ResponseResult<ResponseBody> {
+    pub async fn handler(Path(code): Path<i64>) -> ResponseResult<ResponseBody> {
         let query = NumericCode::select_one_by_code(code)
             .ok_or(Response::bad_request("numeric code not found".into()))?;
 

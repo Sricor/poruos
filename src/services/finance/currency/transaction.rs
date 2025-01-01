@@ -7,9 +7,9 @@ use super::connection;
 
 impl Transaction {
     pub fn insert_one(
-        owner: i32,
-        amount: i32,
-        numeric_code: i32,
+        owner: i64,
+        amount: i64,
+        numeric_code: i64,
         remarks: Option<&String>,
     ) -> Option<Self> {
         let conn = &mut connection();
@@ -28,7 +28,7 @@ impl Transaction {
             .ok()
     }
 
-    pub fn select_one_by_unique_owner(id: i32, owner: i32) -> Option<Self> {
+    pub fn select_one_by_unique_owner(id: i64, owner: i64) -> Option<Self> {
         let conn = &mut connection();
 
         finance_currency_transaction::table
@@ -38,7 +38,7 @@ impl Transaction {
             .ok()
     }
 
-    pub fn select_by_owner(owner: i32, limit: i64, offset: i64) -> Option<Vec<Self>> {
+    pub fn select_by_owner(owner: i64, limit: i64, offset: i64) -> Option<Vec<Self>> {
         let conn = &mut connection();
 
         finance_currency_transaction::table

@@ -3,7 +3,8 @@
 
 [print_schema]
 file = "src/schema.rs"
-custom_type_derives = ["diesel::query_builder::QueryId", "Clone"]
+import_types = ["crate::sqlite_mapping::*"]
+custom_type_derives = ["diesel::sql_types::SqlType", "std::fmt::Debug"]
 
 [migrations_directory]
 dir = "/Users/ioaths/Documents/Github/poruos/migrations"

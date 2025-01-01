@@ -20,6 +20,7 @@ base64 = { version = "0.22", features = ["alloc"], default-features = false }
 axum-server = { version = "0.6", features = ["tls-rustls"], default-features = false }
 tracing = { version = "0.1", features = ["attributes"], default-features = false }
 tracing-subscriber = { version = "0.3", features = ["fmt"], default-features = false }
+num-bigint = { version = "0.4" }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
