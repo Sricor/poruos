@@ -6,6 +6,7 @@ mod schema;
 mod services;
 mod sqlite_mapping;
 mod time;
+mod schedule;
 
 use std::env;
 use std::net::SocketAddr;
@@ -16,6 +17,8 @@ use tracing_subscriber;
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
+
+    let _ = consts::telegram_bot::TELEGRAM_BOT.api_url();
 
     let cert_path = env::var("CERT_PATH");
     let key_path = env::var("KEY_PATH");
