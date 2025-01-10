@@ -4,7 +4,7 @@ pub mod get {
     use serde::{Deserialize, Serialize};
 
     use crate::api::http::prelude::*;
-    use crate::model::finance::currency::NumericCode;
+    use crate::model::finance::currency::numeric_code::NumericCode;
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct ResponseBody {
@@ -35,7 +35,7 @@ pub mod get_code {
     use serde::{Deserialize, Serialize};
 
     use crate::api::http::prelude::*;
-    use crate::model::finance::currency::NumericCode;
+    use crate::model::finance::currency::numeric_code::NumericCode;
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct ResponseBody {

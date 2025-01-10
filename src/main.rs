@@ -2,9 +2,7 @@ mod api;
 mod common;
 mod consts;
 mod model;
-mod schema;
 mod services;
-mod sqlite_mapping;
 mod time;
 mod schedule;
 

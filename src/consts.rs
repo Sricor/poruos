@@ -1,22 +1,19 @@
 use std::sync::LazyLock;
 
 pub mod database {
-    use diesel::r2d2::ConnectionManager;
-    use diesel::sqlite::SqliteConnection;
+    use r2d2_sqlite::SqliteConnectionManager;
+    use rusqlite::{Connection, Result};
 
     use super::LazyLock;
 
-    type Pool = diesel::r2d2::Pool<ConnectionManager<SqliteConnection>>;
-
-    pub static DATABASE: LazyLock<Pool> = LazyLock::new(|| {
+    pub static DATABASE: LazyLock<Connection> = LazyLock::new(|| {
         dotenvy::dotenv().ok();
 
+        let db = SqliteConnectionManager::memory();
         let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-        let manager = ConnectionManager::<SqliteConnection>::new(database_url);
+        let pool = r2d2::Pool::new(db).unwrap();
 
-        diesel::r2d2::Pool::builder()
-            .build(manager)
-            .expect("Failed to create pool")
+        conn
     });
 }
 

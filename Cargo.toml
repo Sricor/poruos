@@ -5,13 +5,6 @@ edition = "2021"
 
 [dependencies]
 tokio = { version = "1", features = ["rt-multi-thread", "net"] }
-diesel = { version = "2", features = [
-    "sqlite", 
-    "returning_clauses_for_sqlite_3_35",
-    "r2d2", 
-    "chrono"] }
-libsqlite3-sys = { version = "0.30", features = ["bundled"] }
-openssl-sys = { version = "0.9", features = ["vendored"] }
 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -25,6 +18,9 @@ tracing = { version = "0.1", features = ["attributes"], default-features = false
 tracing-subscriber = { version = "0.3", features = ["fmt"], default-features = false }
 num-bigint = { version = "0.4" }
 teloxide = { version = "0.13", features = ["macros", "rustls"] }
+
+rusqlite = { version = "0.32.0", features = ["bundled"] }
+r2d2_sqlite = "0.25.0"
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }

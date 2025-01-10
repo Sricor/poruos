@@ -1,9 +1,5 @@
 use chrono::NaiveDateTime;
-use diesel::prelude::{AsChangeset, Queryable, Selectable};
 
-#[derive(Queryable, Selectable, AsChangeset)]
-#[diesel(table_name = crate::schema::person)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct Person {
     _unique: i64,
     nickname: String,
@@ -40,4 +36,25 @@ impl Person {
     pub fn update_password(&mut self, password: String) {
         self.password = password
     }
+}
+
+mod sql {
+    const TABLE: &str = "
+        CREATE TABLE IF NOT EXISTS person (
+            _unique      INTEGER   NOT NULL  UNIQUE  PRIMARY KEY AUTOINCREMENT,
+            nickname     TEXT      NOT NULL,
+            password     TEXT      NOT NULL,
+            created_at   DATETIME  NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+            updated_at   DATETIME  NOT NULL  DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TRIGGER IF NOT EXISTS update_person_updated_at
+        AFTER UPDATE ON person
+        FOR EACH ROW
+        BEGIN
+            UPDATE person
+            SET updated_at = CURRENT_TIMESTAMP
+            WHERE _unique = OLD._unique;
+        END;
+    ";
 }

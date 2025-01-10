@@ -1,15 +1,7 @@
 use std::error::Error;
 
-use diesel::backend::Backend;
-use diesel::deserialize::{FromSql, FromSqlRow};
-use diesel::expression::AsExpression;
-use diesel::serialize::{Output, ToSql};
-use diesel::sql_types::BigInt;
-
 pub mod currency;
 
-#[derive(AsExpression, FromSqlRow, PartialEq, Debug, Clone)]
-#[sql_type = "BigInt"]
 pub struct Amount(i64);
 
 impl Amount {
@@ -39,31 +31,6 @@ impl Amount {
     }
 }
 
-mod sql_diesel {
-    use super::*;
-
-    impl<DB> ToSql<BigInt, DB> for Amount
-    where
-        DB: diesel::backend::Backend,
-        i64: ToSql<BigInt, DB>,
-    {
-        fn to_sql<'b>(&'b self, out: &mut Output<'b, '_, DB>) -> diesel::serialize::Result {
-            <i64 as ToSql<BigInt, DB>>::to_sql(&self.0, out)
-        }
-    }
-
-    impl<DB> FromSql<BigInt, DB> for Amount
-    where
-        DB: diesel::backend::Backend,
-        i64: FromSql<BigInt, DB>,
-    {
-        fn from_sql(bytes: <DB as Backend>::RawValue<'_>) -> diesel::deserialize::Result<Self> {
-            let value = <i64 as FromSql<BigInt, DB>>::from_sql(bytes)?;
-
-            Ok(Amount(value))
-        }
-    }
-}
 
 #[cfg(test)]
 mod tests {
