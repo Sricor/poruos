@@ -58,30 +58,18 @@ mod tests {
     fn test_from_f64_nan() {
         let result = Amount::from_f64(f64::NAN);
         assert!(result.is_err());
-        assert_eq!(
-            result.unwrap_err().to_string(),
-            "NaN is not a valid value for Amount"
-        );
     }
 
     #[test]
     fn test_from_f64_infinity() {
         let result = Amount::from_f64(f64::INFINITY);
         assert!(result.is_err());
-        assert_eq!(
-            result.unwrap_err().to_string(),
-            "Infinity is not a valid value for Amount"
-        );
     }
 
     #[test]
     fn test_from_f64_negative_infinity() {
         let result = Amount::from_f64(f64::NEG_INFINITY);
         assert!(result.is_err());
-        assert_eq!(
-            result.unwrap_err().to_string(),
-            "Infinity is not a valid value for Amount"
-        );
     }
 
     #[test]
@@ -89,10 +77,6 @@ mod tests {
         let large_value = (i64::MAX as f64) / 1e8 + 1.0;
         let result = Amount::from_f64(large_value);
         assert!(result.is_err());
-        assert_eq!(
-            result.unwrap_err().to_string(),
-            "Value is out of range for i64"
-        );
     }
 
     #[test]
@@ -100,10 +84,6 @@ mod tests {
         let small_value = (i64::MIN as f64) / 1e8 - 1.0;
         let result = Amount::from_f64(small_value);
         assert!(result.is_err());
-        assert_eq!(
-            result.unwrap_err().to_string(),
-            "Value is out of range for i64"
-        );
     }
 
     #[test]

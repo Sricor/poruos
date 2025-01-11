@@ -6,6 +6,8 @@ use crate::services::connection;
 
 impl NumericCode {
     pub fn select_all() -> Option<Vec<Self>> {
+        let conn = connection();
+
         todo!()
     }
 

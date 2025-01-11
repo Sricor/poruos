@@ -1,19 +1,19 @@
 use std::sync::LazyLock;
 
 pub mod database {
+    use r2d2::Pool;
     use r2d2_sqlite::SqliteConnectionManager;
-    use rusqlite::{Connection, Result};
 
     use super::LazyLock;
 
-    pub static DATABASE: LazyLock<Connection> = LazyLock::new(|| {
+    pub static DATABASE: LazyLock<Pool<SqliteConnectionManager>> = LazyLock::new(|| {
         dotenvy::dotenv().ok();
 
-        let db = SqliteConnectionManager::memory();
-        let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-        let pool = r2d2::Pool::new(db).unwrap();
+        let path = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+        let database = SqliteConnectionManager::file(path);
+        let pool = r2d2::Pool::new(database).unwrap();
 
-        conn
+        pool
     });
 }
 
