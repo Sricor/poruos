@@ -4,7 +4,6 @@ mod consts;
 mod model;
 mod services;
 mod time;
-mod schedule;
 
 use std::env;
 use std::net::SocketAddr;
