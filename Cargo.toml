@@ -8,20 +8,21 @@ tokio = { version = "1", features = ["rt-multi-thread", "net"] }
 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+
 dotenvy = "0.15"
 chrono = "0.4"
 axum = { version = "0.7.9", features = ["multipart"] }
+axum-server = { version = "0.6", features = ["tls-rustls"], default-features = false }
+
 ring = { version = "0.17", default-features = false }
 base64 = { version = "0.22", features = ["alloc"], default-features = false }
-axum-server = { version = "0.6", features = ["tls-rustls"], default-features = false }
+
 tracing = { version = "0.1", features = ["attributes"], default-features = false }
 tracing-subscriber = { version = "0.3", features = ["fmt"], default-features = false }
-num-bigint = { version = "0.4" }
-teloxide = { version = "0.13", features = ["macros", "rustls"] }
 
 r2d2 = "0.8.10"
-r2d2_sqlite = { version = "0.25.0", features = ["bundled"] }
-
+r2d2_sqlite = { version = "0.25", features = ["bundled"] }
+rusqlite = { version = "0.32", features = ["chrono"] }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }

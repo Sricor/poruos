@@ -1,7 +1,7 @@
 use std::sync::LazyLock;
 
 pub mod database {
-    use r2d2::Pool;
+    use r2d2::{Pool, PooledConnection};
     use r2d2_sqlite::SqliteConnectionManager;
 
     use super::LazyLock;
@@ -13,8 +13,19 @@ pub mod database {
         let database = SqliteConnectionManager::file(path);
         let pool = r2d2::Pool::new(database).unwrap();
 
+        let conn = pool.get().unwrap();
+        conn.execute_batch(&crate::model::initialize()).unwrap();
+
         pool
     });
+
+    pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+
+    pub fn connection() -> Result<PooledConnection<SqliteConnectionManager>> {
+        use crate::consts::database::DATABASE;
+
+        Ok(DATABASE.get()?)
+    }
 }
 
 pub mod claim_encrypt {
@@ -39,55 +50,4 @@ pub mod claim_encrypt {
         )
         .unwrap()
     });
-}
-
-pub mod telegram_bot {
-    use teloxide::prelude::*;
-    use teloxide::utils::command::BotCommands;
-    use teloxide::Bot;
-
-    use super::LazyLock;
-
-    pub static TELEGRAM_BOT: LazyLock<Bot> = LazyLock::new(|| {
-        dotenvy::dotenv().ok();
-
-        let telegram_token = std::env::var("TELEGRAM_BOT_TOKEN").expect("TELEGRAM_BOT_TOKEN must be set");
-
-        let bot = Bot::new(telegram_token);
-
-        let command_bot = bot.clone();
-
-        tokio::spawn(async move {
-            Command::repl(command_bot, answer).await;
-        });
-
-        bot
-    });
-
-    #[derive(BotCommands, Clone)]
-    #[command(rename_rule = "lowercase", description = "These commands are supported:")]
-    enum Command {
-        #[command(description = "display this text.")]
-        Help,
-        #[command(description = "handle a username.")]
-        Username(String),
-        #[command(description = "handle a username and an age.", parse_with = "split")]
-        UsernameAndAge { username: String, age: u8 },
-    }
-
-    async fn answer(bot: Bot, msg: Message, cmd: Command) -> ResponseResult<()> {
-        match cmd {
-            Command::Help => bot.send_message(msg.chat.id, Command::descriptions().to_string()).await?,
-            Command::Username(username) => {
-                bot.send_message(msg.chat.id, format!("Your username is @{username}.")).await?
-            }
-            Command::UsernameAndAge { username, age } => {
-                bot.send_message(msg.chat.id, format!("Your username is @{username} and age is {age}."))
-                    .await?
-            }
-        };
-
-        Ok(())
-    }
-
 }

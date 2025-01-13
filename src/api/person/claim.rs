@@ -20,7 +20,7 @@ pub(super) mod post {
 
     #[tracing::instrument()]
     pub async fn handler(Json(payload): Json<RequestBody>) -> ResponseResult<ResponseBody> {
-        let person = Person::select_one_by_nickname_password(&payload.nickname, &payload.password)
+        let person = Person::select_one_by_nickname_password(&payload.nickname, &payload.password)?
             .ok_or(Response::bad_request(
                 "incorrect nickname or password".into(),
             ))?;

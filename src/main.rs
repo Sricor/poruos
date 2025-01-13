@@ -2,7 +2,6 @@ mod api;
 mod common;
 mod consts;
 mod model;
-mod services;
 mod time;
 
 use std::env;
@@ -14,8 +13,6 @@ use tracing_subscriber;
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
-
-    let _ = consts::telegram_bot::TELEGRAM_BOT.api_url();
 
     let cert_path = env::var("CERT_PATH");
     let key_path = env::var("KEY_PATH");

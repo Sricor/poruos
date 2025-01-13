@@ -38,12 +38,11 @@ mod post {
 
     #[tracing::instrument()]
     pub async fn handler(Json(payload): Json<RequestBody>) -> ResponseResult<ResponseBody> {
-        if let Some(_person) = Person::select_one_by_nickname(&payload.nickname) {
+        if let Some(_person) = Person::select_one_by_nickname(&payload.nickname)? {
             return Err(Response::bad_request("nickname already exists".into()));
         }
 
-        let person = Person::insert_one(&payload.nickname, &payload.password)
-            .ok_or(Response::bad_request("nickname already exists".into()))?;
+        let person = Person::insert_one(&payload.nickname, &payload.password)?;
 
         Ok(Response::ok(ResponseBody {
             claim: Claim::new(person.unique()).issue()?,
@@ -69,7 +68,7 @@ mod get {
 
     #[tracing::instrument()]
     pub async fn handler(Path(unique): Path<i64>) -> ResponseResult<ResponseBody> {
-        match Person::select_one_by_unique(unique) {
+        match Person::select_one_by_unique(unique)? {
             Some(person) => Ok(Response::ok(ResponseBody {
                 unique: person.unique(),
                 nickname: person.nickname().to_string(),
@@ -118,7 +117,7 @@ mod put {
             password: None,
         };
 
-        let mut person = Person::select_one_by_unique(claim.subject())
+        let mut person = Person::select_one_by_unique(claim.subject())?
             .ok_or(Response::bad_request("person does not exist".into()))?;
 
         if let Some(nickname) = payload.nickname {
@@ -138,8 +137,7 @@ mod put {
         }
 
         if is_update {
-            Person::update_one_by_unique(person.unique(), person)
-                .ok_or(Response::bad_request("update error".into()))?;
+            Person::update_one_by_unique(person.unique(), &person)?;
         }
 
         Ok(Response::ok(result))
