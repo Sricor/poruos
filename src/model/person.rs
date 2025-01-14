@@ -47,7 +47,7 @@ mod sql {
     impl crate::model::Model for super::Person {
         fn initialize() -> &'static str {
             "
-                CREATE TABLE IF NOT EXISTS Person (
+                CREATE TABLE IF NOT EXISTS person (
                     _unique      INTEGER   NOT NULL  UNIQUE  PRIMARY KEY AUTOINCREMENT,
                     nickname     TEXT      NOT NULL,
                     password     TEXT      NOT NULL,
@@ -55,11 +55,11 @@ mod sql {
                     updated_at   DATETIME  NOT NULL  DEFAULT CURRENT_TIMESTAMP
                 );
 
-                CREATE TRIGGER IF NOT EXISTS update_Person_updated_at
-                AFTER UPDATE ON Person
+                CREATE TRIGGER IF NOT EXISTS update_person_updated_at
+                AFTER UPDATE ON person
                 FOR EACH ROW
                 BEGIN
-                    UPDATE Person
+                    UPDATE person
                     SET updated_at = CURRENT_TIMESTAMP
                     WHERE _unique = OLD._unique;
                 END;
@@ -69,7 +69,7 @@ mod sql {
 
     impl super::Person {
         pub fn insert_one(nickname: &String, password: &String) -> Result<Self> {
-            let sql = "INSERT INTO Person (nickname, password) VALUES (?1, ?2) RETURNING _unique, nickname, password, created_at, updated_at";
+            let sql = "INSERT INTO person (nickname, password) VALUES (?1, ?2) RETURNING _unique, nickname, password, created_at, updated_at";
             let connection = connection()?;
             let mut statement = connection.prepare(sql)?;
 
@@ -87,7 +87,7 @@ mod sql {
         }
 
         pub fn select_one_by_unique(unique: i64) -> Result<Option<Self>> {
-            let sql = "SELECT _unique, nickname, password, created_at, updated_at FROM Person WHERE _unique = ?1 LIMIT 1";
+            let sql = "SELECT _unique, nickname, password, created_at, updated_at FROM person WHERE _unique = ?1 LIMIT 1";
             let connection = connection()?;
             let mut statement = connection.prepare(sql)?;
 
@@ -107,7 +107,7 @@ mod sql {
         }
 
         pub fn select_one_by_nickname(nickname: &String) -> Result<Option<Self>> {
-            let sql = "SELECT _unique, nickname, password, created_at, updated_at FROM Person WHERE _unique = ?1 LIMIT 1";
+            let sql = "SELECT _unique, nickname, password, created_at, updated_at FROM person WHERE _unique = ?1 LIMIT 1";
             let connection = connection()?;
             let mut statement = connection.prepare(sql)?;
 
@@ -130,7 +130,7 @@ mod sql {
             nickname: &String,
             password: &String,
         ) -> Result<Option<Self>> {
-            let sql = "SELECT _unique, nickname, password, created_at, updated_at FROM Person WHERE nickname = ?1 AND password = ?2 LIMIT 1";
+            let sql = "SELECT _unique, nickname, password, created_at, updated_at FROM person WHERE nickname = ?1 AND password = ?2 LIMIT 1";
             let connection = connection()?;
             let mut statement = connection.prepare(sql)?;
 
@@ -150,7 +150,7 @@ mod sql {
         }
 
         pub fn update_one_by_unique(unique: i64, item: &Self) -> Result<()> {
-            let sql = "UPDATE Person SET nickname = ?2, password = ?3 WHERE _unique = ?1";
+            let sql = "UPDATE person SET nickname = ?2, password = ?3 WHERE _unique = ?1";
             let connection = connection()?;
             let mut statement = connection.prepare(sql)?;
 
