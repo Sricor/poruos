@@ -4,12 +4,12 @@ pub mod get {
     use serde::{Deserialize, Serialize};
 
     use crate::api::http::prelude::*;
+    use crate::api::http::paginate;
     use crate::model::finance::currency::transaction::Transaction;
 
     #[derive(Debug, Deserialize)]
     pub struct Params {
-        pub limit: Option<u8>,
-        pub offset: Option<u8>,
+        pub pages: Option<u32>,
     }
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -28,11 +28,9 @@ pub mod get {
         claim: Claim,
         Query(params): Query<Params>,
     ) -> ResponseResult<Vec<ResponseBody>> {
-        let query = Transaction::select_by_owner(
-            claim.subject(),
-            params.limit.unwrap_or(32) as i64,
-            params.offset.unwrap_or(0) as i64,
-        )?;
+        let (limit, offset) = paginate(params.pages.unwrap_or(0), 64);
+
+        let query = Transaction::select_by_owner(claim.subject(), limit.into(), offset.into())?;
 
         let result = query
             .into_iter()
