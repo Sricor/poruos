@@ -15,7 +15,7 @@ pub mod get {
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct ResponseBody {
         pub unique: i64,
-        pub amount: f64,
+        pub amount: String,
         pub numeric_code: i64,
         pub remarks: Option<String>,
         pub occurrence_at: u128,
@@ -39,7 +39,7 @@ pub mod get {
             .into_iter()
             .map(|e| ResponseBody {
                 unique: e.unique(),
-                amount: e.amount.to_f64(),
+                amount: e.amount.to_string(),
                 numeric_code: e.numeric_code,
                 remarks: e.remarks.clone(),
                 occurrence_at: e.occurrence_at(),
@@ -64,7 +64,7 @@ pub mod post {
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct RequestBody {
-        pub amount: f64,
+        pub amount: Amount,
         pub numeric_code: i64,
         pub remarks: Option<String>,
         pub occurrence_at: Option<i64>,
@@ -73,7 +73,7 @@ pub mod post {
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct ResponseBody {
         pub unique: i64,
-        pub amount: f64,
+        pub amount: Amount,
         pub numeric_code: i64,
         pub remarks: Option<String>,
         pub occurrence_at: u128,
@@ -98,7 +98,7 @@ pub mod post {
 
         let item = Transaction::insert_one(
             claim.subject(),
-            Amount::from_f64(payload.amount)?,
+            payload.amount,
             payload.numeric_code,
             payload.remarks.as_ref(),
             occurrence_at,
@@ -106,7 +106,7 @@ pub mod post {
 
         Ok(Response::ok(ResponseBody {
             unique: item.unique(),
-            amount: item.amount.to_f64(),
+            amount: item.amount.clone(),
             numeric_code: item.numeric_code,
             remarks: item.remarks.clone(),
             occurrence_at: item.occurrence_at(),

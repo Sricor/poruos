@@ -48,7 +48,7 @@ mod sql {
                 CREATE TABLE IF NOT EXISTS finance_currency_transaction (
                     _unique         INTEGER   NOT NULL  UNIQUE  PRIMARY KEY AUTOINCREMENT,
                     owner           INTEGER   NOT NULL,
-                    amount          INTEGER   NOT NULL,
+                    amount          TEXT      NOT NULL,
                     numeric_code    INTEGER   NOT NULL,
                     remarks         TEXT,
                     is_publish      BOOLEAN   NOT NULL  DEFAULT TRUE,
