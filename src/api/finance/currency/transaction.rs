@@ -9,7 +9,7 @@ pub mod get {
 
     #[derive(Debug, Deserialize)]
     pub struct Params {
-        pub pages: Option<u32>,
+        pub page: Option<u32>,
     }
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -28,7 +28,7 @@ pub mod get {
         claim: Claim,
         Query(params): Query<Params>,
     ) -> ResponseResult<Vec<ResponseBody>> {
-        let (limit, offset) = paginate(params.pages.unwrap_or(0), 64);
+        let (limit, offset) = paginate(params.page.unwrap_or(0), 64);
 
         let query = Transaction::select_by_owner(claim.subject(), limit.into(), offset.into())?;
 
