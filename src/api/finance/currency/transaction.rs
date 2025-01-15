@@ -32,8 +32,7 @@ pub mod get {
             claim.subject(),
             params.limit.unwrap_or(32) as i64,
             params.offset.unwrap_or(0) as i64,
-        )
-        .ok_or(Response::bad_request("transcation not found".into()))?;
+        )?;
 
         let result = query
             .into_iter()

@@ -93,8 +93,8 @@ mod sql {
                     numeric_code,
                     remarks,
                     is_publish,
-                    occurrence_at, 
-                    created_at, 
+                    occurrence_at,
+                    created_at,
                     updated_at
             ";
 
@@ -130,8 +130,45 @@ mod sql {
             todo!()
         }
 
-        pub fn select_by_owner(owner: i64, limit: i64, offset: i64) -> Option<Vec<Self>> {
-            todo!()
+        pub fn select_by_owner(owner: i64, limit: i64, offset: i64) -> Result<Vec<Self>> {
+            let sql = "
+                SELECT
+                    _unique,
+                    owner,
+                    amount,
+                    numeric_code,
+                    remarks,
+                    is_publish,
+                    occurrence_at,
+                    created_at,
+                    updated_at 
+                FROM finance_currency_transaction
+                WHERE owner = ?1
+                LIMIT ?2
+                OFFSET ?3";
+            let connection = connection()?;
+            let mut statement = connection.prepare(sql)?;
+
+            let items = statement.query_map([owner, limit, offset], |row| {
+                Ok(Self {
+                    _unique: row.get(0)?,
+                    owner: row.get(1)?,
+                    amount: row.get(2)?,
+                    numeric_code: row.get(3)?,
+                    remarks: row.get(4)?,
+                    is_publish: row.get(5)?,
+                    occurrence_at: row.get(6)?,
+                    created_at: row.get(7)?,
+                    updated_at: row.get(8)?,
+                })
+            })?;
+
+            let mut result = Vec::new();
+            for item in items {
+                result.push(item?);
+            }
+
+            Ok(result)
         }
     }
 }
