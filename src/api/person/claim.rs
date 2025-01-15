@@ -4,6 +4,7 @@ pub(super) mod post {
     use serde::{Deserialize, Serialize};
 
     use crate::api::http::prelude::*;
+    use crate::api::person::validate_value;
     use crate::model::person::Person;
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -20,10 +21,12 @@ pub(super) mod post {
 
     #[tracing::instrument()]
     pub async fn handler(Json(payload): Json<RequestBody>) -> ResponseResult<ResponseBody> {
-        let person = Person::select_one_by_nickname_password(&payload.nickname, &payload.password)?
-            .ok_or(Response::bad_request(
-                "incorrect nickname or password".into(),
-            ))?;
+        let nickname = validate_value::nickname(payload.nickname)?;
+        let password = validate_value::password(payload.password)?;
+
+        let person = Person::select_one_by_nickname_password(&nickname, &password)?.ok_or(
+            Response::bad_request("incorrect nickname or password".into()),
+        )?;
 
         let claim = Claim::new(person.unique());
         let expire = claim.expire();

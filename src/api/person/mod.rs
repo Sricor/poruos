@@ -25,6 +25,8 @@ mod post {
     use crate::api::http::prelude::*;
     use crate::model::person::Person;
 
+    use super::validate_value;
+
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct RequestBody {
         pub nickname: String,
@@ -38,11 +40,14 @@ mod post {
 
     #[tracing::instrument()]
     pub async fn handler(Json(payload): Json<RequestBody>) -> ResponseResult<ResponseBody> {
-        if let Some(_person) = Person::select_one_by_nickname(&payload.nickname)? {
+        let nickname = validate_value::nickname(payload.nickname)?;
+        let password = validate_value::password(payload.password)?;
+
+        if let Some(_person) = Person::select_one_by_nickname(&nickname)? {
             return Err(Response::bad_request("nickname already exists".into()));
         }
 
-        let person = Person::insert_one(&payload.nickname, &payload.password)?;
+        let person = Person::insert_one(&nickname, &password)?;
 
         Ok(Response::ok(ResponseBody {
             claim: Claim::new(person.unique()).issue()?,
@@ -88,6 +93,8 @@ mod put {
     use crate::api::http::prelude::*;
     use crate::model::person::Person;
 
+    use super::validate_value;
+
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct RequestBody {
         pub nickname: Option<String>,
@@ -121,6 +128,8 @@ mod put {
             .ok_or(Response::bad_request("person does not exist".into()))?;
 
         if let Some(nickname) = payload.nickname {
+            let nickname = validate_value::nickname(nickname)?;
+
             if person.nickname() != &nickname {
                 is_update = true;
                 person.update_nickname(nickname.to_string());
@@ -129,6 +138,8 @@ mod put {
         }
 
         if let Some(password) = payload.password {
+            let password = validate_value::password(password)?;
+
             if person.password() != &password {
                 is_update = true;
                 person.update_password(password.to_string());
@@ -141,5 +152,44 @@ mod put {
         }
 
         Ok(Response::ok(result))
+    }
+}
+
+mod validate_value {
+    use crate::api::http::prelude::Response;
+    use crate::common::hash::{digest_to_hex, sha256_digest};
+
+    /// Validates and processes a nickname
+    pub fn nickname(value: String) -> Result<String, Response<()>> {
+        if value.is_empty() {
+            return Err(Response::bad_request(
+                "nickname cannot be empty".to_string(),
+            ));
+        }
+
+        if value.len() > 20 {
+            return Err(Response::bad_request("nickname is too long".to_string()));
+        }
+
+        Ok(value)
+    }
+
+    /// Validates and hashes a password
+    pub fn password(value: String) -> Result<String, Response<()>> {
+        if value.is_empty() {
+            return Err(Response::bad_request(
+                "password cannot be empty".to_string(),
+            ));
+        }
+
+        if value.len() > 1024 {
+            return Err(Response::bad_request(
+                "password is too long (maximum 1024 characters)".to_string(),
+            ));
+        }
+
+        let digest = sha256_digest(value.as_bytes());
+
+        digest_to_hex(&digest).ok_or(Response::bad_request("hex conversion failed".to_string()))
     }
 }
