@@ -29,7 +29,7 @@ pub mod get {
 }
 
 pub mod get_code {
-    pub const PATH: &str = "/finance/currency/:code";
+    pub const PATH: &str = "/finance/currency/numeric_code/:code";
 
     use serde::{Deserialize, Serialize};
 
