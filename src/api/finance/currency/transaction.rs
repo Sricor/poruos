@@ -52,10 +52,10 @@ pub mod get {
     }
 }
 
-// TODO: fix the error numeric_code from finance_currency_numeric_code
 pub mod post {
     pub const PATH: &str = "/finance/currency/transaction";
 
+    use chrono::{DateTime, Utc};
     use serde::{Deserialize, Serialize};
 
     use crate::api::http::prelude::*;
@@ -67,6 +67,7 @@ pub mod post {
         pub amount: f64,
         pub numeric_code: i64,
         pub remarks: Option<String>,
+        pub occurrence_at: Option<i64>,
     }
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -85,13 +86,23 @@ pub mod post {
         claim: Claim,
         Json(payload): Json<RequestBody>,
     ) -> ResponseResult<ResponseBody> {
+        let occurrence_at = match payload.occurrence_at {
+            Some(value) => {
+                let time = DateTime::from_timestamp_millis(value).ok_or(Response::bad_request(
+                    format!("invalid timestamp {}", value),
+                ))?;
+                time.naive_utc()
+            }
+            None => Utc::now().naive_utc(),
+        };
+
         let item = Transaction::insert_one(
             claim.subject(),
             Amount::from_f64(payload.amount)?,
             payload.numeric_code,
             payload.remarks.as_ref(),
-        )
-        .ok_or(Response::bad_request("transcation insert error".into()))?;
+            occurrence_at,
+        )?;
 
         Ok(Response::ok(ResponseBody {
             unique: item.unique(),

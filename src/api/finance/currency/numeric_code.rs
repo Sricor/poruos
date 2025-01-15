@@ -14,8 +14,7 @@ pub mod get {
 
     #[tracing::instrument()]
     pub async fn handler() -> ResponseResult<Vec<ResponseBody>> {
-        let query = NumericCode::select_all()
-            .ok_or(Response::bad_request("numeric code not found".into()))?;
+        let query = NumericCode::select_all()?;
 
         let result = query
             .into_iter()
@@ -45,8 +44,9 @@ pub mod get_code {
 
     #[tracing::instrument()]
     pub async fn handler(Path(code): Path<i64>) -> ResponseResult<ResponseBody> {
-        let query = NumericCode::select_one_by_code(code)
-            .ok_or(Response::bad_request("numeric code not found".into()))?;
+        let query = NumericCode::select_one_by_code(code)?.ok_or(Response::bad_request(
+            format!("numeric code {} not supported", code),
+        ))?;
 
         Ok(Response::ok(ResponseBody {
             code: query.code(),

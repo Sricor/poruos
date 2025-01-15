@@ -31,6 +31,25 @@ impl Amount {
     }
 }
 
+mod database {
+    use rusqlite::{types::FromSql, ToSql};
+
+    use super::Amount;
+
+    impl FromSql for Amount {
+        fn column_result(
+            value: rusqlite::types::ValueRef<'_>,
+        ) -> rusqlite::types::FromSqlResult<Self> {
+            todo!()
+        }
+    }
+
+    impl ToSql for Amount {
+        fn to_sql(&self) -> rusqlite::Result<rusqlite::types::ToSqlOutput<'_>> {
+            todo!()
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {

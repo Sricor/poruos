@@ -1,11 +1,6 @@
-use chrono::NaiveDateTime;
-
 pub struct NumericCode {
-    _unique: i64,
     pub code: i64,
     pub symbol: String,
-    pub created_at: NaiveDateTime,
-    pub updated_at: NaiveDateTime,
 }
 
 impl NumericCode {
@@ -19,7 +14,10 @@ impl NumericCode {
 }
 
 mod sql {
+    use rusqlite::OptionalExtension;
+
     use crate::consts::database::connection;
+    use crate::consts::database::Result;
 
     impl crate::model::Model for super::NumericCode {
         fn initialize() -> &'static str {
@@ -60,14 +58,42 @@ mod sql {
     }
 
     impl super::NumericCode {
-        pub fn select_all() -> Option<Vec<Self>> {
-            let conn = connection();
+        pub fn select_all() -> Result<Vec<Self>> {
+            let sql = "SELECT code, symbol FROM finance_currency_numeric_code";
+            let connection = connection()?;
+            let mut statement = connection.prepare(sql)?;
 
-            todo!()
+            let items = statement.query_map([], |row| {
+                Ok(Self {
+                    code: row.get(0)?,
+                    symbol: row.get(1)?,
+                })
+            })?;
+
+            let mut result = Vec::new();
+            for item in items {
+                result.push(item?);
+            }
+
+            Ok(result)
         }
 
-        pub fn select_one_by_code(code: i64) -> Option<Self> {
-            todo!()
+        pub fn select_one_by_code(code: i64) -> Result<Option<Self>> {
+            let sql =
+                "SELECT code, symbol FROM finance_currency_numeric_code WHERE code = ?1 LIMIT 1";
+            let connection = connection()?;
+            let mut statement = connection.prepare(sql)?;
+
+            let item = statement
+                .query_row([code], |row| {
+                    Ok(Self {
+                        code: row.get(0)?,
+                        symbol: row.get(1)?,
+                    })
+                })
+                .optional()?;
+
+            Ok(item)
         }
     }
 }

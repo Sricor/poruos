@@ -35,6 +35,11 @@ impl Transaction {
 }
 
 mod sql {
+    use chrono::NaiveDateTime;
+    use rusqlite::ToSql;
+
+    use crate::consts::database::connection;
+    use crate::consts::database::Result;
     use crate::model::finance::Amount;
 
     impl crate::model::Model for super::Transaction {
@@ -72,8 +77,53 @@ mod sql {
             amount: Amount,
             numeric_code: i64,
             remarks: Option<&String>,
-        ) -> Option<Self> {
-            todo!()
+            occurrence_at: NaiveDateTime,
+        ) -> Result<Self> {
+            let sql = "
+                INSERT INTO finance_currency_transaction (  
+                    owner,
+                    amount,
+                    numeric_code,
+                    remarks,
+                    occurrence_at
+                ) VALUES (?1, ?2, ?3, ?4, ?5) RETURNING 
+                    _unique,
+                    owner,
+                    amount,
+                    numeric_code,
+                    remarks,
+                    is_publish,
+                    occurrence_at, 
+                    created_at, 
+                    updated_at
+            ";
+
+            let connection = connection()?;
+            let mut statement = connection.prepare(sql)?;
+
+            let owner = owner.to_sql()?;
+            let amount = amount.to_sql()?;
+            let numeric_code = numeric_code.to_sql()?;
+            let remarks = remarks.to_sql().unwrap_or("NULL".into());
+            let occurrence_at = occurrence_at.to_sql()?;
+            let item = statement.query_row(
+                [owner, amount, numeric_code, remarks, occurrence_at],
+                |row| {
+                    Ok(Self {
+                        _unique: row.get(0)?,
+                        owner: row.get(1)?,
+                        amount: row.get(2)?,
+                        numeric_code: row.get(3)?,
+                        remarks: row.get(4)?,
+                        is_publish: row.get(5)?,
+                        occurrence_at: row.get(6)?,
+                        created_at: row.get(7)?,
+                        updated_at: row.get(8)?,
+                    })
+                },
+            )?;
+
+            Ok(item)
         }
 
         pub fn select_one_by_unique_owner(id: i64, owner: i64) -> Option<Self> {
